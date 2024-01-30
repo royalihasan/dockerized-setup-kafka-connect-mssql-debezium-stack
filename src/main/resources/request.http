@@ -1,0 +1,5 @@
+POST http://localhost:8083/connectors/
+Accept: application/json
+Content-Type: application/json
+
+< create_order_source_connector.json
