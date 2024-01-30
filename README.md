@@ -28,7 +28,7 @@ Make sure you have the following software installed on your machine:
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/your-username/dockerized-setup-kafka-connect-mssql-debezium-stack.git
+git clone https://github.com/royalihasan/dockerized-setup-kafka-connect-mssql-debezium-stack.git
 cd dockerized-setup-kafka-connect-mssql-debezium-stack
 ```
 
