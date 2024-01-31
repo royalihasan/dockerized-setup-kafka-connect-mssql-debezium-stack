@@ -208,3 +208,68 @@ WHERE order_id = 11;
 > Congrats! Your CDC is working Fine
 
 ---
+
+## Create Postgres JDBC Sink Connector
+
+**Step1:Create a request**
+
+`POST http://localhost:8083/connectors/`
+
+```json
+{
+  "name": "jdbc-postgres-sink-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true",
+    "tasks.max": "1",
+    "connection.url": "jdbc:postgresql://postgres:5432/",
+    "connection.username": "postgres",
+    "connection.password": "postgres",
+    "insert.mode": "insert",
+    "auto.create": "true",
+    "auto.evolve": "true",
+    "schema.evolution": "basic",
+    "database.time_zone": "UTC",
+    "topics": "fullfillment.demo.dbo.ORDERS",
+    "table.name.format": "orders"
+  }
+}
+```
+
+**Step2: Check the connector is Working Fine**
+
+```shell
+curl -s "http://localhost:8083/connectors?expand=info&expand=status" | \
+jq '. | to_entries[] | [ .value.info.type, .key, .value.status.connector.state,.value.status.tasks[].state,.value.info.config."connector.class"]|join(":|:")' | \
+column -s : -t| sed 's/\"//g'| sort
+```
+
+`The Output Should be like this `
+
+```text
+source | inventory-connector           | RUNNING | RUNNING | io.debezium.connector.sqlserver.SqlServerConnector
+sink   | jdbc-postgres-sink-connector  | RUNNING | RUNNING | io.debezium.connector.oracle.OracleConnector
+```
+
+> Now check the Changes in Postgres DB
+
+`1. First You need to access the Postgres BASH and Login into it`
+
+```shell
+psql -U postgres
+```
+
+`2. Show the Tables in DB by using \dt`
+
+```sql
+SELECT *
+FROM orders;
+```
+
+> There will be a same Data which was in Oracle Db
+
+_Hurrah , Congrats You have Done!_
+
+---
