@@ -121,7 +121,10 @@ values (8, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
 
 ## Create a Source Connector
 
+> Note: Make Sure MSSQL Agent Should be Enable as ENV Variable `MSSQL_AGENT_ENABLED=true `
+
 `POST http://localhost:8083/connectors/`
+
 ```json
 {
   "name": "inventory-connector",
@@ -140,3 +143,68 @@ values (8, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
   }
 }
 ```
+
+**Now Check the Connector is Working Correctly!**
+
+`By Using this in your BASH`
+
+```shell
+curl -s "http://localhost:8083/connectors?expand=info&expand=status" | \
+jq '. | to_entries[] | [ .value.info.type, .key, .value.status.connector.state,.value.status.tasks[].state,.value.info.config."connector.class"]|join(":|:")' | \
+column -s : -t| sed 's/\"//g'| sort
+```
+
+`The Output Should be like this `
+
+```text
+source | inventory-connector | RUNNING | RUNNING | io.debezium.connector.sqlserver.SqlServerConnector
+```
+
+## Now Check the CDC is Working Fine
+
+**Step1: Listen the Data By Tailing the Topic**
+
+```shell
+docker run --tty --network resources_default confluentinc/cp-kafkacat kafkacat -b kafka:9092 -C -f "%S: %s\n"  -t test.demo.dbo.ORDERS
+```
+
+OR
+
+```shell
+docker exec -it connect bash /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092  --from-beginning --property print.key=true --topic test.demo.dbo.ORDERS
+```
+
+**Step2: Access you MSSQL Bash**
+
+```shell
+docker exec -it mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P Admin123
+```
+
+**Step3: Do Some Changes in the `ORDERS` Table**
+
+`INSERT`
+
+```sql
+insert into demo.dbo.ORDERS (order_id, customer_id, order_ts, order_total_usd, item)
+values (11, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
+```
+
+`UPDATE`
+
+```sql
+UPDATE demo.dbo.ORDERS
+SET order_total_usd = '3.50'
+WHERE order_id = 11;
+```
+
+`DELETE`
+
+```sql
+DELETE
+FROM demo.dbo.ORDERS
+WHERE order_id = 11;
+```
+
+> Congrats! Your CDC is working Fine
+
+---
