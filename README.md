@@ -144,6 +144,26 @@ values (8, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
 }
 ```
 
+**Include all tables**
+
+```json
+{
+  "name": "inventory-connector-generic",
+  "config": {
+    "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
+    "database.hostname": "mssql",
+    "database.port": "1433",
+    "database.user": "sa",
+    "database.password": "Admin123",
+    "database.names": "demo",
+    "topic.prefix": "mssql",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+    "schema.history.internal.kafka.topic": "schemahistory.mssql",
+    "database.encrypt": "false"
+  }
+}
+```
+
 **Now Check the Connector is Working Correctly!**
 
 `By Using this in your BASH`
@@ -234,6 +254,28 @@ WHERE order_id = 11;
     "database.time_zone": "UTC",
     "topics": "fullfillment.demo.dbo.ORDERS",
     "table.name.format": "orders"
+  }
+}
+```
+Or
+
+include all tables
+
+```json
+{
+  "name": "jdbc-connector-generic",
+  "config": {
+    "connector.class": "io.debezium.connector.jdbc.JdbcSinkConnector",
+    "tasks.max": "1",
+    "connection.url": "jdbc:postgresql://postgres:5432/",
+    "connection.username": "postgres",
+    "connection.password": "postgres",
+    "insert.mode": "upsert",
+    "delete.enabled": "true",
+    "primary.key.mode": "record_key",
+    "schema.evolution": "basic",
+    "database.time_zone": "UTC",
+    "topics": "mssql.demo.dbo.COUPONS,mssql.demo.dbo.CUSTOMERS,mssql.demo.dbo.ORDER_COUPONS,mssql.demo.dbo.ORDER_DETAILS,mssql.demo.dbo.ORDER_PAYMENTS,mssql.demo.dbo.ORDER_SHIPMENTS,mssql.demo.dbo.ORDER_STATUS,mssql.demo.dbo.ORDERS,mssql.demo.dbo.PAYMENT_METHODS,mssql.demo.dbo.PRODUCTS,mssql.demo.dbo.SHIPPING_METHODS"
   }
 }
 ```
