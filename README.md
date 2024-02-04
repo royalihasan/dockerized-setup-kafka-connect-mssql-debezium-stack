@@ -135,10 +135,10 @@ values (8, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
     "database.user": "sa",
     "database.password": "Admin123",
     "database.names": "demo",
-    "topic.prefix": "test",
+    "topic.prefix": "mssql",
     "table.include.list": "dbo.ORDERS",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-    "schema.history.internal.kafka.topic": "schemahistory.fullfillment",
+    "schema.history.internal.kafka.topic": "schemahistory.mssql",
     "database.encrypt": "false"
   }
 }
@@ -252,14 +252,14 @@ WHERE order_id = 11;
     "auto.evolve": "true",
     "schema.evolution": "basic",
     "database.time_zone": "UTC",
-    "topics": "fullfillment.demo.dbo.ORDERS",
+    "topics": "mssql.demo.dbo.ORDERS",
     "table.name.format": "orders"
   }
 }
 ```
-Or
+_Or_
 
-include all tables
+**include all tables**
 
 ```json
 {
