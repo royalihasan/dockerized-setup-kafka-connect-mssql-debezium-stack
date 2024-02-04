@@ -163,25 +163,26 @@ values (8, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
   }
 }
 ```
+
 _OR_
 
-If you to include all tables in `demo` database you can this
+If you want to include all tables in `demo` database you can this
 
 ```json
 {
-    "name": "inventory-connector-generic",
-    "config": {
-        "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
-        "database.hostname": "mssql",
-        "database.port": "1433",
-        "database.user": "sa",
-        "database.password": "Admin123",
-        "database.names": "demo",
-        "topic.prefix": "mssql",
-        "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-        "schema.history.internal.kafka.topic": "schemahistory.mssql",
-        "database.encrypt": "false"
-    }
+  "name": "inventory-connector-generic",
+  "config": {
+    "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
+    "database.hostname": "mssql",
+    "database.port": "1433",
+    "database.user": "sa",
+    "database.password": "Admin123",
+    "database.names": "demo",
+    "topic.prefix": "mssql",
+    "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+    "schema.history.internal.kafka.topic": "schemahistory.mssql",
+    "database.encrypt": "false"
+  }
 }
 ```
 
@@ -278,6 +279,7 @@ WHERE order_id = 11;
   }
 }
 ```
+
 _Or_
 
 **include all tables**
