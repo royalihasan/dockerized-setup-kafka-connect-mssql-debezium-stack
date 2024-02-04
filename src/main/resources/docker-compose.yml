@@ -70,6 +70,21 @@ services:
       - "8083:8083"
     networks:
       - kafka-network
+  kowl:
+    image: quay.io/cloudhut/kowl
+    restart: on-failure
+
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_BROKERS=kafka:9092  # Replace with your Kafka broker host
+      - KAFKA_OBSERVER_POLL_INTERVAL=5s  # Adjust as needed
+      - KAFKA_CONNECT_REST_URL:http://connect:8083
+      # Add other environment variables as per your requirements
+    depends_on:
+      - connect
+    networks:
+      - kafka-network
   ui:
     container_name: ui
     image: debezium/debezium-ui
