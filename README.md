@@ -125,9 +125,11 @@ values (8, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
 
 `POST http://localhost:8083/connectors/`
 
+Note: if you want to include just single Table or specific pass the table name with `dbo.` in `table.include.list` property
+
 ```json
 {
-  "name": "inventory-connector",
+  "name": "inventory-connector-customer",
   "config": {
     "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
     "database.hostname": "mssql",
@@ -138,31 +140,12 @@ values (8, 2, '2019-11-28T10:27:19Z', '3.67', 'Proper Job');
     "topic.prefix": "mssql",
     "table.include.list": "dbo.ORDERS",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-    "schema.history.internal.kafka.topic": "schemahistory.mssql",
+    "schema.history.internal.kafka.topic": "schema.history.mssql",
     "database.encrypt": "false"
   }
 }
 ```
 
-**Include all tables**
-
-```json
-{
-  "name": "inventory-connector-generic",
-  "config": {
-    "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
-    "database.hostname": "mssql",
-    "database.port": "1433",
-    "database.user": "sa",
-    "database.password": "Admin123",
-    "database.names": "demo",
-    "topic.prefix": "mssql",
-    "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-    "schema.history.internal.kafka.topic": "schemahistory.mssql",
-    "database.encrypt": "false"
-  }
-}
-```
 
 _OR_
 
@@ -180,7 +163,7 @@ If you want to include all tables in `demo` database you can this
     "database.names": "demo",
     "topic.prefix": "mssql",
     "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
-    "schema.history.internal.kafka.topic": "schemahistory.mssql",
+    "schema.history.internal.kafka.topic": "schema.history.mssql",
     "database.encrypt": "false"
   }
 }
@@ -199,7 +182,7 @@ column -s : -t| sed 's/\"//g'| sort
 `The Output Should be like this `
 
 ```text
-source | inventory-connector | RUNNING | RUNNING | io.debezium.connector.sqlserver.SqlServerConnector
+source | inventory-connector-customer | RUNNING | RUNNING | io.debezium.connector.sqlserver.SqlServerConnector
 ```
 
 ## Now Check the CDC is Working Fine
@@ -207,13 +190,13 @@ source | inventory-connector | RUNNING | RUNNING | io.debezium.connector.sqlserv
 **Step1: Listen the Data By Tailing the Topic**
 
 ```shell
-docker run --tty --network resources_default confluentinc/cp-kafkacat kafkacat -b kafka:9092 -C -f "%S: %s\n"  -t test.demo.dbo.ORDERS
+docker run --tty --network resources_default confluentinc/cp-kafkacat kafkacat -b kafka:9092 -C -f "%S: %s\n"  -t mssql.demo.dbo.ORDERS
 ```
 
 OR
 
 ```shell
-docker exec -it connect bash /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092  --from-beginning --property print.key=true --topic test.demo.dbo.ORDERS
+docker exec -it connect bash /kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092  --from-beginning --property print.key=true --topic mssql.demo.dbo.ORDERS
 ```
 
 **Step2: Access you MSSQL Bash**
